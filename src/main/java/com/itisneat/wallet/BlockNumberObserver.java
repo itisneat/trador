@@ -3,7 +3,7 @@
  */
 package com.itisneat.wallet;
 
-import org.web3j.protocol.core.methods.response.EthBlock;
+import org.web3j.protocol.core.methods.response.EthBlockNumber;
 
 import rx.Observer;
 
@@ -11,11 +11,11 @@ import rx.Observer;
  * @author leo
  *
  */
-public class BlockObserver implements Runnable, Observer<EthBlock> {
+public class BlockNumberObserver implements Runnable, Observer<EthBlockNumber> {
 	
 	Boolean stopFlag = false;
 	
-	EthBlock block = null;
+	EthBlockNumber blockNumber = null;
 	
 	String exitMsg;
 
@@ -33,9 +33,6 @@ public class BlockObserver implements Runnable, Observer<EthBlock> {
 						System.out.println("BlockObserver be stopped: msg: [" + exitMsg + "]");
 						return;
 					}
-					
-					System.out.println(block.getBlock().getNumber());
-					
 				} catch (InterruptedException e) {
 					System.out.println(e.getMessage());
 				}
@@ -47,27 +44,28 @@ public class BlockObserver implements Runnable, Observer<EthBlock> {
 
 	@Override
 	public void onCompleted() {
+		System.out.println("block number observer receive complete event");
 		synchronized (stopFlag) {
 			stopFlag = true;
-			exitMsg = "complete";
 			stopFlag.notify();
 		}
 	}
 
 	@Override
 	public void onError(Throwable e) {
+		System.out.println("block number observer receive error event");
 		synchronized (stopFlag) {
 			stopFlag = true;
-			e.printStackTrace();
-			exitMsg = "on error: " + e.getMessage();
+			System.out.println("on error: " + e.getMessage());
 			stopFlag.notify();
 		}
 	}
 
 	@Override
-	public void onNext(EthBlock t) {
+	public void onNext(EthBlockNumber t) {
 		synchronized (stopFlag) {
-			block = t;
+			blockNumber = t;
+			System.out.println(t.getBlockNumber());
 			stopFlag.notify();
 		}
 	}
