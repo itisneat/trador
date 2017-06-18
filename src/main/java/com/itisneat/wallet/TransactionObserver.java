@@ -20,6 +20,6 @@ public class TransactionObserver implements Observer<TransactionInfo> {
     @Override
     public void onNext(TransactionInfo transactionInfo) {
         Trader trader = new Trader();
-        trader.trasfer(transactionInfo.getAccountId(), transactionInfo.getPasssword(), transactionInfo.getToAccountId(),transactionInfo.getAmount());
+        //trader.trasfer(transactionInfo.getAccountId(), transactionInfo.getPasssword(), transactionInfo.getToAccountId(),transactionInfo.getAmount());
     }
 }
