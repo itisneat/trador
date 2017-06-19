@@ -11,7 +11,6 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.protocol.core.methods.response.EthTransaction;
 
 import com.itisneat.wallet.parity.ParityClient;
 import com.itisneat.wallet.wrap.MyParity;
@@ -25,36 +24,15 @@ import rx.Observable;
  */
 public class Trader {
 
-//	private static BigInteger nonce = new BigInteger("0");
-//
-//	private static BigInteger gasPrice = new BigInteger("1");
-//
-//	private static BigInteger gasLimit = new BigInteger("50");
-
 	private static MyParity parity = (MyParity) ParityClient.getParity();
-//
-//	public String trasfer(String accountId,String passsword,String toAccountId, BigDecimal amount)  {
-//
-//		String tradeHash = null;
-//		Transaction transaction = Transaction.createEtherTransaction(accountId,null,null,null,toAccountId,amount.toBigInteger());
-//		try{
-//			EthSendTransaction ethSendTransaction =parity.personalSendTransaction(transaction,passsword).send();
-//			if(ethSendTransaction!=null){
-//				tradeHash = ethSendTransaction.getTransactionHash();
-//				System.out.println(String.format("账户:[%s]转账到账户:[%s],交易hash:[%s]",accountId,toAccountId,tradeHash));
-//			}
-//		}catch (Exception e){
-//			System.out.println(String.format("账户:[%]交易失败!",accountId));
-//			e.printStackTrace();
-//		}
-//		return tradeHash;
-//	}
-	/**
-	 * @param args
-	 */
+	
+	
+//	/**
+//	 * @param args
+//	 */
 //	public static void main(String[] args) {
 //		Observable<EthBlock> blockObservable = parity.blockObservable(false);
-//		BlockObserver observer = new BlockObserver();
+//		MyBlockObserver observer = new MyBlockObserver();
 //		blockObservable.subscribe(observer);
 //		Thread task = new Thread(observer);
 //		task.start();
@@ -66,27 +44,54 @@ public class Trader {
 //		}
 //	}
 	
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		try {
-			EthTransaction etx = parity.ethGetTransactionByHash("0x82f2afa33ec1a71b8be53ae51b603ae387473ae2e615990a59ddfaed86289dba").sendAsync().get();
-			if (etx.hasError()) {
-				System.out.println("failed get transaction, msg: " + etx.getError().getMessage());
-			} else {
-				System.out.println(etx.getTransaction().get().getBlockNumber());
-				System.out.println(etx.getTransaction().get().getInput());
-				System.out.println(etx.getTransaction().get().getV());
-				System.out.println(etx.getTransaction().get().getR());
-				System.out.println(etx.getTransaction().get().getS());
-				System.out.println(etx.getTransaction().get().getBlockNumberRaw());
-			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		Observable<org.web3j.protocol.core.methods.response.Transaction> txObserver = parity.transactionObservable();
+//		Observable<org.web3j.protocol.core.methods.response.Transaction> txObserver = parity.pendingTransactionObservable();
+//		MyTransactionObserver observer = new MyTransactionObserver();
+//		txObserver.subscribe(observer);
+		
+		
+//		try {
+//			EthBlockNumber ebn = parity.ethBlockNumber().send();
+//			if (ebn.hasError()) {
+//				System.out.println("wiht error: " + ebn.getError().getMessage());
+//			} else {
+//				System.out.println("block number is: " + ebn.getBlockNumber());
+//			}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
+		Observable<String> txHashObserver = parity.ethPendingTransactionHashObservable();
+		txHashObserver.subscribe(s -> System.out.println(s));
 	}
+	
+//	public static void main(String[] args) {
+//		try {
+//			EthTransaction etx = parity.ethGetTransactionByHash("0x82f2afa33ec1a71b8be53ae51b603ae387473ae2e615990a59ddfaed86289dba").sendAsync().get();
+//			if (etx.hasError()) {
+//				System.out.println("failed get transaction, msg: " + etx.getError().getMessage());
+//			} else {
+//				System.out.println(etx.getTransaction().get().getBlockNumber());
+//				System.out.println(etx.getTransaction().get().getInput());
+//				System.out.println(etx.getTransaction().get().getV());
+//				System.out.println(etx.getTransaction().get().getR());
+//				System.out.println(etx.getTransaction().get().getS());
+//				System.out.println(etx.getTransaction().get().getBlockNumberRaw());
+//			}
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
 //	public static void main(String[] args) {
 //		BigInteger value = Convert.toWei("0.012", Convert.Unit.ETHER).toBigInteger();

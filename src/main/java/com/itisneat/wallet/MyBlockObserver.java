@@ -11,11 +11,11 @@ import rx.Observer;
  * @author leo
  *
  */
-public class BlockObserver implements Runnable, Observer<EthBlock> {
+public class MyBlockObserver implements Runnable, Observer<EthBlock> {
 	
 	Boolean stopFlag = false;
 	
-	EthBlock block = null;
+//	EthBlock block = null;
 	
 	String exitMsg;
 
@@ -34,7 +34,6 @@ public class BlockObserver implements Runnable, Observer<EthBlock> {
 						return;
 					}
 					
-					System.out.println(block.getBlock().getNumber());
 					
 				} catch (InterruptedException e) {
 					System.out.println(e.getMessage());
@@ -65,9 +64,9 @@ public class BlockObserver implements Runnable, Observer<EthBlock> {
 	}
 
 	@Override
-	public void onNext(EthBlock t) {
+	public void onNext(EthBlock block) {
 		synchronized (stopFlag) {
-			block = t;
+			System.out.println(block.getBlock().getNumber());
 			stopFlag.notify();
 		}
 	}
