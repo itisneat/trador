@@ -13,7 +13,7 @@ import org.web3j.protocol.parity.Parity;
  */
 public class ParityClient {
 	
-    private static String ip = "http://106.15.:45/";
+    private static String ip = "http://106.15:45/";
 
     private ParityClient(){}
 

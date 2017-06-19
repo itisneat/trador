@@ -17,9 +17,9 @@ public class MyParity extends JsonRpc2_0Parity {
        super(web3jService);
     }
 
-    public Request<?, EthSendTransaction> personalSendTransaction(Transaction transaction) {
+    public Request<?, EthSendTransaction> personalSendTransaction(Transaction transaction, String pwd) {
         return new Request("personal_sendTransaction",
-                Arrays.asList(new Object[]{transaction,"iin62"}),
+                Arrays.asList(new Object[]{transaction, pwd}),
                 1L, this.web3jService,
                 EthSendTransaction.class);
     }
