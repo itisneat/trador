@@ -2,7 +2,11 @@ package com.itisneat.wallet.count;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Created by leo on 2017/6/19.
@@ -10,26 +14,28 @@ import java.util.Map;
 public class TxCountCenter {
     private BigInteger currentBlock;
     //key=startBlockId
-    private Map<BigInteger, BlockCount> blockCountMap = new HashMap<BigInteger, BlockCount>();
+    private TreeMap<BigInteger, BlockCount> blockCountMap = new TreeMap<BigInteger, BlockCount>();
     //key=TxHash
     private Map<String, Tx> allTxMap = new HashMap<String, Tx>();
 
     private static volatile TxCountCenter txCountCenter = new TxCountCenter();
+    
     private TxCountCenter(){}
+    
     public static TxCountCenter getInstance()
     {
         return txCountCenter;
     }
 
-    public BigInteger getCurrentBlock() {
+    BigInteger getCurrentBlock() {
         return currentBlock;
     }
 
-    public Map<BigInteger, BlockCount> getBlockCountMap() {
+    Map<BigInteger, BlockCount> getBlockCountMap() {
         return blockCountMap;
     }
 
-    public Map<String, Tx> getAllTxMap() {
+    Map<String, Tx> getAllTxMap() {
         return allTxMap;
     }
 
@@ -86,6 +92,30 @@ public class TxCountCenter {
         blockCount.countSumAndAvg(costBlockNum.intValue());
     }
 
+    public synchronized List<DelayInfo> getRecentlyDelayInfo(Integer c) {
+    	if (c == null) {
+    		c = 10;
+    	}
+    	
+    	Set<BigInteger> desKeySet = blockCountMap.descendingKeySet();
+    	LinkedList<DelayInfo> infos = new LinkedList<>();
+    	
+    	for (BigInteger bn : desKeySet) {
+    		if (c -- == 0) {
+    			break;
+    		}
+    		BlockCount bc = blockCountMap.get(bn);
+    		DelayInfo info = new DelayInfo();
+    		info.setStartBlockNum(bc.getBlockNum());
+    		info.setAvgCostBlock(bc.getAvg());
+    		info.setAllFinished(bc.finished());
+    		
+    		infos.addFirst(info);
+    	}
+    	
+    	return infos;
+    }
+    
     public static void main(String[] args)
     {
         TxCountCenter txCenter = TxCountCenter.getInstance();

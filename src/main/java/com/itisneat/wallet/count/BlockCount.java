@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class BlockCount {
     private BigInteger blockNum;
-    private int finishedNum;
+    private int finishedTxNum;
     private int sum;
     private double avg;
 
@@ -37,12 +37,12 @@ public class BlockCount {
     }
 
     public void countSumAndAvg(int costBlockNum) {
-        finishedNum++;
+    	finishedTxNum++;
         this.sum = sum+costBlockNum;
         //DecimalFormat df=new DecimalFormat("0.00");
-        this.avg = (double)sum/(double)finishedNum;
+        this.avg = (double)sum/(double)finishedTxNum;
 
-        if(finishedNum == pendingTx.size())
+        if(finishedTxNum == pendingTx.size())
         {
             System.out.println("**************Hi,all transaction finish in block:"+ this.blockNum+" AVG:" + avg);
         }
@@ -64,5 +64,9 @@ public class BlockCount {
     public List<String> getPendingTx()
     {
         return pendingTx;
+    }
+    
+    public boolean finished() {
+    	return this.finishedTxNum == this.pendingTx.size();
     }
 }
