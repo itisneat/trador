@@ -16,7 +16,7 @@ public class TxCountCenter {
     //key=startBlockId
     private TreeMap<BigInteger, BlockCount> blockCountMap = new TreeMap<BigInteger, BlockCount>();
     //key=TxHash
-    private Map<String, Tx> allTxMap = new HashMap<String, Tx>();
+    private Map<String, TxInfo> pendingTxMap = new HashMap<String, TxInfo>();
 
     private static volatile TxCountCenter txCountCenter = new TxCountCenter();
     
@@ -27,16 +27,16 @@ public class TxCountCenter {
         return txCountCenter;
     }
 
-    BigInteger getCurrentBlock() {
+    private BigInteger getCurrentBlock() {
         return currentBlock;
     }
 
-    Map<BigInteger, BlockCount> getBlockCountMap() {
+    private Map<BigInteger, BlockCount> getBlockCountMap() {
         return blockCountMap;
     }
 
-    Map<String, Tx> getAllTxMap() {
-        return allTxMap;
+    private Map<String, TxInfo> getAllTxMap() {
+        return pendingTxMap;
     }
 
     public synchronized void setCurrentBlock(BigInteger currentBlock) {
@@ -47,7 +47,7 @@ public class TxCountCenter {
         else
         {
             this.currentBlock = currentBlock;
-            System.out.println("INFO: set currentBlock="+currentBlock);
+            System.out.println("INFO: set currentBlock="+currentBlock + " Total pending transaction: " + pendingTxMap.size());
         }
     }
 
@@ -58,38 +58,49 @@ public class TxCountCenter {
             System.out.println("ERROR: Failed to add new pending transaction since currentBlock is null.txHash="+txHash);
             return;
         }
-        if(allTxMap.containsKey(txHash))
+        
+        if(pendingTxMap.containsKey(txHash))
         {
             System.out.println("ERROR: duplicate transaction hash.txHash="+txHash);
             return;
         }
-        Tx tx = new Tx(txHash);
+        
+        TxInfo tx = new TxInfo(txHash);
         tx.setStartBlock(currentBlock);
-        tx.setTxStatus(Tx.TxStatus.pending);
+        tx.setTxStatus(TxInfo.TxStatus.pending);
+        pendingTxMap.put(txHash, tx);
+        
         BlockCount blockCount = blockCountMap.get(currentBlock);
         if(blockCount == null)
         {
             blockCount = new BlockCount(currentBlock);
             blockCountMap.put(currentBlock, blockCount);
         }
-        blockCount.addPendingTx(txHash);  //ToDO
-        allTxMap.put(txHash, tx);
-        System.out.println("INFO: new pending transaction added. txHash="+txHash+"startBlock="+currentBlock);
+        blockCount.addPendingTx(txHash);  //TODO
+        
+//        System.out.println("INFO: new pending transaction added. txHash="+txHash+" startBlock="+currentBlock);
     }
 
     public synchronized void txFinishCount(String txHash, BigInteger endBlock)
     {
-        Tx tx = allTxMap.get(txHash);
+        TxInfo tx = pendingTxMap.get(txHash);
         if(tx == null)
         {
-            System.out.println("WARN: won't do txFinishCount since no record of this txHash. txHash="+txHash);
+//            System.out.println("WARN: won't do txFinishCount since no record of this txHash. txHash="+txHash);
             return;
         }
-        tx.setEndBlock(endBlock);
-        tx.setTxStatus(Tx.TxStatus.finish);
+//        tx.setEndBlock(endBlock);
+//        tx.setTxStatus(TxInfo.TxStatus.finish);
+        
+        BigInteger costBlockNum = endBlock.subtract(tx.getStartBlock());
         BlockCount blockCount = blockCountMap.get(tx.getStartBlock());
-        BigInteger costBlockNum = tx.getEndBlock().subtract(tx.getStartBlock());
-        blockCount.countSumAndAvg(costBlockNum.intValue());
+        if(blockCount != null) {
+        	blockCount.countSumAndAvg(costBlockNum.intValue());
+        } else {
+        	 System.out.println("ERROR: can not find the according block count. txHash="+txHash);
+        }
+        
+        pendingTxMap.remove(txHash);
     }
 
     public synchronized List<DelayInfo> getRecentlyDelayInfo(Integer c) {
@@ -108,8 +119,8 @@ public class TxCountCenter {
     		DelayInfo info = new DelayInfo();
     		info.setStartBlockNum(bc.getBlockNum());
     		info.setAvgCostBlock(bc.getAvg());
-    		info.setAllFinished(bc.finished());
-    		
+    		info.setFinishInfo(bc.getFinishedInfo());
+    		info.setDistribution(bc.getDistributionString());
     		infos.addFirst(info);
     	}
     	

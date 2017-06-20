@@ -5,17 +5,18 @@ import java.math.BigInteger;
 /**
  * Created by leo on 2017/6/19.
  */
-public class Tx {
+public class TxInfo {
     private String txHash;
     private BigInteger startBlock;
     private BigInteger endBlock;
     private TxStatus txStatus;
+    
     public enum TxStatus
     {
         pending, finish
     }
 
-    public Tx(String txHash)
+    public TxInfo(String txHash)
     {
         this.txHash = txHash;
     }

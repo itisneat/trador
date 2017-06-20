@@ -4,8 +4,9 @@ import java.math.BigInteger;
 
 public class DelayInfo {
 	BigInteger startBlockNum;
-	Boolean allFinished;
+	String finishInfo;
 	double avgCostBlock;
+	String distribution;
 	
 	public BigInteger getStartBlockNum() {
 		return startBlockNum;
@@ -13,17 +14,22 @@ public class DelayInfo {
 	public void setStartBlockNum(BigInteger startBlockNum) {
 		this.startBlockNum = startBlockNum;
 	}
-	public Boolean getAllFinished() {
-		return allFinished;
-	}
-	public void setAllFinished(Boolean allFinished) {
-		this.allFinished = allFinished;
-	}
 	public double getAvgCostBlock() {
 		return avgCostBlock;
 	}
 	public void setAvgCostBlock(double avgCostBlock) {
 		this.avgCostBlock = avgCostBlock;
 	}
-	
+	public String getDistribution() {
+		return distribution;
+	}
+	public void setDistribution(String distribution) {
+		this.distribution = distribution;
+	}
+	public String getFinishInfo() {
+		return finishInfo;
+	}
+	public void setFinishInfo(String finishInfo) {
+		this.finishInfo = finishInfo;
+	}
 }

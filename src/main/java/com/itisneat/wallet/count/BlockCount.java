@@ -12,6 +12,7 @@ public class BlockCount {
     private int finishedTxNum;
     private int sum;
     private double avg;
+    private int[] distribution = new int[20];
 
     private List<String> pendingTx = new ArrayList<String>();
 
@@ -32,11 +33,21 @@ public class BlockCount {
 //        this.pendingTxNum = pendingTxNum;
 //    }
 
-    public int getSum() {
+    int getSum() {
         return sum;
     }
 
     public void countSumAndAvg(int costBlockNum) {
+    	if (costBlockNum < 1) {
+    		System.out.println("ERROR: cost block num can not be less than 1.");
+    		return;
+    	}
+    	if (costBlockNum < 20) {
+    		this.distribution[costBlockNum - 1] ++;
+    	} else {
+    		this.distribution[19]++;
+    	}
+    	
     	finishedTxNum++;
         this.sum = sum+costBlockNum;
         //DecimalFormat df=new DecimalFormat("0.00");
@@ -44,8 +55,20 @@ public class BlockCount {
 
         if(finishedTxNum == pendingTx.size())
         {
-            System.out.println("**************Hi,all transaction finish in block:"+ this.blockNum+" AVG:" + avg);
+            System.out.println("**************Hi,all transaction finish in block:"+ this.blockNum +" AVG:" + avg + " distribution: " + this.getDistributionString());
         }
+    }
+    
+    public String getDistributionString() {
+    	StringBuilder sb = new StringBuilder("[");
+    	for (int i = 0; i < 20; i++) {
+    		if (i == 19) {
+    			sb.append(">").append(i + 1).append(":").append(this.distribution[i]).append("]");
+    		} else {
+    			sb.append(i + 1).append(":").append(this.distribution[i]).append(" , ");
+    		}
+    	}
+    	return sb.toString();
     }
 
     public double getAvg() {
@@ -66,7 +89,7 @@ public class BlockCount {
         return pendingTx;
     }
     
-    public boolean finished() {
-    	return this.finishedTxNum == this.pendingTx.size();
+    public String getFinishedInfo() {
+    	return String.format("%-9s", this.finishedTxNum + "/" + this.pendingTx.size());
     }
 }

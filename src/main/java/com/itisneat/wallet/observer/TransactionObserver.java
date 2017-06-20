@@ -1,4 +1,4 @@
-package com.itisneat.wallet;
+package com.itisneat.wallet.observer;
 
 import org.web3j.protocol.core.methods.request.Transaction;
 
