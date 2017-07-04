@@ -41,7 +41,7 @@ public class Trader {
 			Observable<EthBlock> blockObservable = parity.blockObservable(true);
 			MyBlockObserver blockObserver = new MyBlockObserver(blockObservable);
 			blockObservable.subscribe(blockObserver);
-			
+
 			Observable<org.web3j.protocol.core.methods.response.Transaction> txObservable = parity.pendingTransactionObservable();
 			MyPendingTransactionObserver transObserver = new MyPendingTransactionObserver(txObservable);
 			txObservable.subscribe(transObserver);
